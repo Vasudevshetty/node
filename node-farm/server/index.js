@@ -1,5 +1,7 @@
 import fs from "fs";
 import http from "http";
+import CardsContainer from "../src/CardsContainer";
+import { renderToString } from "react-dom/server";
 // import url from "url";
 
 // Files
@@ -27,6 +29,7 @@ fs.readFile("./txt/start.txt", "utf-8", (err, data1) => {
 
 */
 const data = fs.readFileSync(`./dev-data/data.json`, "utf-8");
+const products = JSON.parse(data);
 
 // server
 const server = http.createServer((request, response) => {
@@ -39,6 +42,8 @@ const server = http.createServer((request, response) => {
     response.writeHead(200, {
       "Content-type": "application/json",
     });
+    const html = renderToString(<CardsContainer products={products} />);
+    console.log(html);
     response.end(data);
   } else {
     response.writeHead(404, {
