@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import CardsContainer from "./CardsContainer";
 import "./index.scss";
+import Product from "./Product";
 
 function App() {
   const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     async function fetchdata() {
@@ -18,7 +20,14 @@ function App() {
     <div className="container">
       <h1>🌽 Node Farm 🥦</h1>
 
-      <CardsContainer products={products} />
+      {selectedProduct ? (
+        <Product product={selectedProduct} setSelected={setSelectedProduct} />
+      ) : (
+        <CardsContainer
+          products={products}
+          setSelectedProduct={setSelectedProduct}
+        />
+      )}
     </div>
   );
 }
