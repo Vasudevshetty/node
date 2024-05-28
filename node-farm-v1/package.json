@@ -11,6 +11,8 @@
     "server": "json-server -w ./server/dev-data/data.json -p 3000"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
     "json-server": "^1.0.0-alpha.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
