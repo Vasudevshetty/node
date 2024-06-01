@@ -1,15 +1,13 @@
-const fs = require("fs");
+// const tours = JSON.parse(
+//   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
+// );
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
-
-const checkId = (req, res, next, val) => {
-  if (+req.params.id > tours.length)
-    return res.status(404).json({ status: "fail", message: "Invalid id" });
-  next();
-};
-exports.checkId = checkId;
+// const checkId = (req, res, next, val) => {
+//   if (+req.params.id > tours.length)
+//     return res.status(404).json({ status: "fail", message: "Invalid id" });
+//   next();
+// };
+// exports.checkId = checkId;
 
 exports.checkBody = (req, res, next) => {
   if (!req.body.name || !req.body.price) {
@@ -25,40 +23,40 @@ const getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
     requestTime: req.requestTime,
-    results: tours.length,
-    data: { tours },
+    // results: tours.length,
+    // data: { tours },
   });
 };
 exports.getAllTours = getAllTours;
 
 const getTour = (req, res) => {
-  const tour = tours.find((tour) => tour.id === +req.params.id);
+  // const tour = tours.find((tour) => tour.id === +req.params.id);
 
   // if (+req.params.id > tours.length)
   res.status(200).json({
     status: "success",
-    data: { tour },
+    // data: { tour },
   });
 };
 exports.getTour = getTour;
 
 const createTour = (req, res) => {
   // console.log(req.body);
-  const newId = tours[tours.length - 1].id + 1;
-  const tour = { ...req.body, id: newId };
-  tours.push(tour);
-  fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
-    JSON.stringify(tours),
-    (err) => {
-      res.status(201).json({
-        status: "success",
-        data: {
-          tour,
-        },
-      });
-    }
-  );
+  // const newId = tours[tours.length - 1].id + 1;
+  // const tour = { ...req.body, id: newId };
+  // tours.push(tour);
+  // fs.writeFile(
+  //   `${__dirname}/dev-data/data/tours-simple.json`,
+  //   JSON.stringify(tours),
+  //   (err) => {
+  //     res.status(201).json({
+  //       status: "success",
+  //       data: {
+  //         tour,
+  //       },
+  //     });
+  //   }
+  // );
 };
 exports.createTour = createTour;
 
