@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-const slugify = require("slugify");
+// const validator = require("validator");
+// const slugify = require("slugify");
 
 const tourSchema = mongoose.Schema(
   {
@@ -10,6 +11,16 @@ const tourSchema = mongoose.Schema(
       required: [true, "A tour must have a name"],
       unique: true,
       trim: true,
+      minlength: [
+        10,
+        "A tour name must be greater than or equal to 10 characters",
+      ],
+      maxlength: [
+        40,
+        "A tour name must be lesser than or equal to 40 characters",
+      ],
+      // to konw how to use validator npm package
+      // validate: [validator.isAlpha, "Tour name must contain only characters"],
     },
     slug: String,
     duration: {
@@ -23,10 +34,16 @@ const tourSchema = mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, "A tour must have a difficulty"],
+      enum: {
+        values: ["easy", "medium", "difficult"],
+        message: "Difficulty is either easy, meidum or difficult",
+      },
     },
     ratingsAverage: {
       type: Number,
       default: 4.5,
+      min: [1, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
     },
     ratingsQuantity: {
       type: Number,
@@ -36,7 +53,17 @@ const tourSchema = mongoose.Schema(
       type: Number,
       required: [true, "A tour must contain a price"],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        // validator npm package checkout
+        validator: function (val) {
+          // this points to the current doc on new document creation.
+          return val < this.price;
+        },
+        message: "Discount price ({VALUE}) should below the regular prize",
+      },
+    },
     summary: {
       type: String,
       trim: true,
