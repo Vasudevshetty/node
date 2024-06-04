@@ -10,14 +10,14 @@ const signToken = (id) =>
   });
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-  });
+  // const newUser = await User.create({
+  //   name: req.body.name,
+  //   email: req.body.email,
+  //   password: req.body.password,
+  //   passwordConfirm: req.body.passwordConfirm,
+  // });
 
-  // const newUser = await User.create(req.body);
+  const newUser = await User.create(req.body);
 
   const token = signToken(newUser._id);
   res.status(201).json({
@@ -87,3 +87,15 @@ exports.protect = catchAsync(async (req, res, next) => {
   // Grant access to the protected route.
   next();
 });
+
+exports.restrictTo =
+  (...roles) =>
+  (req, res, next) => {
+    // roles is an array
+
+    if (!roles.includes(req.user.role))
+      return next(
+        new AppError("You do not have permission to perform this action", 403)
+      );
+    next();
+  };
