@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./userModel");
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 // const validator = require("validator");
@@ -112,6 +113,7 @@ const tourSchema = mongoose.Schema(
         day: Number,
       },
     ],
+    guides: Array,
   },
   {
     toJSON: { virtuals: true },
@@ -121,6 +123,15 @@ const tourSchema = mongoose.Schema(
 
 tourSchema.virtual("durationsWeeks").get(function () {
   return this.duration / 7;
+});
+
+tourSchema.pre("save", async function (next) {
+  const guidesPromises = this.guides.map(
+    async (guideId) => await User.findById(guideId)
+  );
+
+  this.guides = await Promise.all(guidesPromises);
+  next();
 });
 
 // Document middleware, runs btw .save() and .create()
