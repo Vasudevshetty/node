@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./userModel");
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 // const validator = require("validator");
@@ -113,7 +112,12 @@ const tourSchema = mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -125,14 +129,23 @@ tourSchema.virtual("durationsWeeks").get(function () {
   return this.duration / 7;
 });
 
-tourSchema.pre("save", async function (next) {
-  const guidesPromises = this.guides.map(
-    async (guideId) => await User.findById(guideId)
-  );
-
-  this.guides = await Promise.all(guidesPromises);
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "guides",
+    select: "-__v -passwordChangedAt",
+  });
   next();
 });
+
+// use child refernecing
+// tourSchema.pre("save", async function (next) {
+//   const guidesPromises = this.guides.map(
+//     async (guideId) => await User.findById(guideId)
+//   );
+
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
 
 // Document middleware, runs btw .save() and .create()
 // tourSchema.pre("save", function (next) {
