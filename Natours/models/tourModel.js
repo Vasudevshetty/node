@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 // const validator = require("validator");
@@ -125,6 +126,9 @@ const tourSchema = mongoose.Schema(
   }
 );
 
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 tourSchema.virtual("durationsWeeks").get(function () {
   return this.duration / 7;
 });
@@ -136,6 +140,12 @@ tourSchema.virtual("reviews", {
   localField: "_id",
 });
 
+// Document middleware, runs btw .save() and .create()
+tourSchema.pre("save", function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
 tourSchema.pre(/^find/, function (next) {
   this.populate({
     path: "guides",
@@ -143,46 +153,6 @@ tourSchema.pre(/^find/, function (next) {
   });
   next();
 });
-
-// use child refernecing
-// tourSchema.pre("save", async function (next) {
-//   const guidesPromises = this.guides.map(
-//     async (guideId) => await User.findById(guideId)
-//   );
-
-//   this.guides = await Promise.all(guidesPromises);
-//   next();
-// });
-
-// Document middleware, runs btw .save() and .create()
-// tourSchema.pre("save", function (next) {
-//   this.slug = slugify(this.name, { lower: true });
-//   next();
-// });
-
-// tourSchema.post("save", function (doc, next) {
-//   next();
-//   console.log(doc,this);
-// });
-
-// // query middleware
-// tourSchema.pre(/^find/, function (next) {
-//   this.find({ secretTour: { $ne: true } });
-//   this.start = Date.now();
-//   next();
-// });
-
-// tourSchema.post(/^find/, function (docs, next) {
-//   //eslint-disable-next-line
-//   console.log(`Query took ${Date.now() - this.start} ms!`);
-//   next();
-// });
-
-// // aggregation model
-// tourSchema.pre("aggregate", function (next) {
-//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-//   next();
-// });
 
 const Tour = mongoose.model("Tour", tourSchema);
 
