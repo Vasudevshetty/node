@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
@@ -13,6 +14,13 @@ const AppError = require("./utils/appError");
 const errorController = require("./controllers/errorController");
 
 const app = express();
+
+// templating engine
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
+
+// serving static files
+app.use(express.static(path.join(__dirname, "public")));
 
 // set security http header
 app.use(helmet());
@@ -55,13 +63,14 @@ app.use(
   })
 );
 
-// serving static files
-app.use(express.static(`${__dirname}/public`));
-
 // test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
+});
+
+app.get("/", (req, res) => {
+  res.status(200).render("base");
 });
 
 // Routes
