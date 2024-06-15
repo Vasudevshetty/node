@@ -24,7 +24,13 @@ exports.getTour = catchAsync(async (req, res, next) => {
   if (!tour) next(new AppError("There is no such error"));
 
   res.status(200).render("tour", {
-    title:`${tour.name} Tour`,
+    title: `${tour.name} Tour`,
     tour,
+  });
+});
+
+exports.getLoginForm = catchAsync(async (req, res, next) => {
+  res.status(200).render("login", {
+    title: "Log in to you account",
   });
 });
