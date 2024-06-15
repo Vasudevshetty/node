@@ -608,9 +608,9 @@ body {
   -ms-scroll-snap-type: x mandatory;
   scroll-snap-type: x mandatory;
 }
-::-webkit-scrollbar{
-  width: 0;
-}
+/* ::-webkit-scrollbar{
+  display: none;
+} */
 .reviews__card {
   width: 30rem;
   padding: 4rem;
