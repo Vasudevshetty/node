@@ -41,7 +41,22 @@ const login = async (email, password) => {
   }
 };
 
+const logout = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/v1/users/logout");
+    const data = await res.json();
+
+    if (data.status === "success") {
+      showAlert("success", "Logged out successfully");
+      location.reload(true);
+    }
+  } catch (err) {
+    showAlert("error", "Error logging out! Try again");
+  }
+};
+
 const loginForm = document.querySelector(".form");
+const logoutButton = document.querySelector(".nav__el--logout");
 
 if (loginForm)
   loginForm.addEventListener("submit", (e) => {
@@ -50,3 +65,5 @@ if (loginForm)
     e.preventDefault();
     login(email, password);
   });
+
+if (logoutButton) logoutButton.addEventListener("click", logout);
